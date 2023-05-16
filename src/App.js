@@ -87,23 +87,26 @@ export default function App() {
   };
 
   return (
-    <div>
-      <h1>Guest List App</h1>
-
+    <div className="CentralGuestListModule">
+      <h1>🥂💃 Your Party Guestlist 🥳🥂</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div>
-          <div>
-            <label htmlFor="firstName">First name</label>
+          <div className="label-input-container">
+            <label htmlFor="firstName" className="firstname">
+              First Name
+            </label>
             <input
               id="firstName"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
           </div>
-          <div>
-            <label htmlFor="lastName">Last name</label>
+          <div className="label-input-container">
+            <label htmlFor="lastName" className="lastname">
+              Last Name
+            </label>
             <input
               id="lastName"
               value={lastName}
@@ -115,12 +118,14 @@ export default function App() {
               }}
             />
           </div>
-          <button onClick={addGuest}>Add Guest</button>
+          <button onClick={addGuest} className="MainButton">
+            Add Guest
+          </button>
 
           <div>
             {guests.map((guest) => (
               <div key={`guest-${guest.id}`} data-test-id={`guest-${guest.id}`}>
-                <p>
+                <p className="guest-name">
                   {guest.firstName} {guest.lastName}{' '}
                 </p>
                 <button
@@ -138,7 +143,9 @@ export default function App() {
                       guest.attending ? 'attending' : 'not attending'
                     } status`}
                   />
-                  {guest.attending ? 'Attending' : 'Not attending'}
+                  <span className="attending-status">
+                    {guest.attending ? 'Attending' : 'Not attending'}{' '}
+                  </span>
                 </label>
               </div>
             ))}
