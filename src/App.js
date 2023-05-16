@@ -22,6 +22,15 @@ export default function App() {
     const updatedGuests = guests.filter((guest) => guest.id !== guestId);
     setGuests(updatedGuests);
   };
+  const toggleAttending = (guestId) => {
+    const updatedGuests = guests.map((guest) => {
+      if (guest.id === guestId) {
+        return { ...guest, attending: !guest.attending };
+      }
+      return guest;
+    });
+    setGuests(updatedGuests);
+  };
 
   return (
     <div>
@@ -50,6 +59,18 @@ export default function App() {
           <p>First Name: {guest.firstName}</p>
           <p>Last Name: {guest.lastName}</p>
           <p>Attending: {guest.attending ? 'Yes' : 'No'}</p>
+          <label
+            htmlFor={`attending-${guest.id}`}
+            aria-label={`${guest.firstName} ${guest.lastName} attending status`}
+          >
+            Attending:
+            <input
+              id={`attending-${guest.id}`}
+              type="checkbox"
+              checked={guest.attending}
+              onChange={() => toggleAttending(guest.id)}
+            />
+          </label>
           <button
             onClick={() => deleteGuest(guest.id)}
             aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
