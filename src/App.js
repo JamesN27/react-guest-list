@@ -18,6 +18,10 @@ export default function App() {
     setFirstName('');
     setLastName('');
   };
+  const deleteGuest = (guestId) => {
+    const updatedGuests = guests.filter((guest) => guest.id !== guestId);
+    setGuests(updatedGuests);
+  };
 
   return (
     <div>
@@ -46,6 +50,12 @@ export default function App() {
           <p>First Name: {guest.firstName}</p>
           <p>Last Name: {guest.lastName}</p>
           <p>Attending: {guest.attending ? 'Yes' : 'No'}</p>
+          <button
+            onClick={() => deleteGuest(guest.id)}
+            aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+          >
+            Remove
+          </button>
         </div>
       ))}
     </div>
