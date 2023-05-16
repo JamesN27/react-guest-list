@@ -21,7 +21,7 @@ export default function App() {
 
   return (
     <div>
-      <label htmlFor="firstName">Last name:</label>
+      <label htmlFor="firstName">First name:</label>
       <input
         id="firstName"
         value={firstName}
