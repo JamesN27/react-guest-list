@@ -1,10 +1,23 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function App() {
+  const baseUrl =
+    'http://fee50489-60ea-4a37-b552-fa345e536535.id.repl.co/guests/';
   const [guests, setGuests] = useState([]);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+
+  useEffect(() => {
+    const fetchGuestsFromAPI = () => {
+      fetch(`${baseUrl}/guests`)
+        .then((response) => response.json())
+        .then((data) => setGuests(data))
+        .catch((error) => console.log(error));
+    };
+
+    fetchGuestsFromAPI();
+  }, []);
 
   const addGuest = (newFirstName, newLastName) => {
     const newGuest = {
