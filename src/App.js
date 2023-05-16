@@ -1,97 +1,150 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 
+const baseUrl = 'https://fee50489-60ea-4a37-b552-fa345e536535.id.repl.co';
+
 export default function App() {
-  const baseUrl =
-    'http://fee50489-60ea-4a37-b552-fa345e536535.id.repl.co/guests/';
   const [guests, setGuests] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  useEffect(() => {
-    const fetchGuestsFromAPI = () => {
-      fetch(`${baseUrl}/guests`)
-        .then((response) => response.json())
-        .then((data) => setGuests(data))
-        .catch((error) => console.log(error));
-    };
+  const loadGuests = () => {
+    fetch(`${baseUrl}/guests`)
+      .then((response) => response.json())
+      .then((data) => {
+        setGuests(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error loading guests:', error);
+      });
+  };
 
-    fetchGuestsFromAPI();
+  useEffect(() => {
+    loadGuests();
   }, []);
 
-  const addGuest = (newFirstName, newLastName) => {
-    const newGuest = {
-      firstName: newFirstName,
-      lastName: newLastName,
-      attending: false,
-    };
-    setGuests([...guests, newGuest]);
+  const addGuest = () => {
+    if (firstName && lastName) {
+      const newGuest = {
+        firstName,
+        lastName,
+        attending: false,
+      };
+      fetch(`${baseUrl}/guests`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newGuest),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setGuests([...guests, data]);
+          setFirstName('');
+          setLastName('');
+        })
+        .catch((error) => {
+          console.error('Error adding guest:', error);
+        });
+    }
   };
-  const clearFields = () => {
-    setFirstName('');
-    setLastName('');
+
+  const removeGuest = async (guestId) => {
+    try {
+      await fetch(`${baseUrl}/guests/${guestId}`, {
+        method: 'DELETE',
+      });
+      setGuests(guests.filter((guest) => guest.id !== guestId));
+    } catch (error) {
+      console.error('Error removing guest:', error);
+    }
   };
-  const deleteGuest = (guestId) => {
-    const updatedGuests = guests.filter((guest) => guest.id !== guestId);
-    setGuests(updatedGuests);
-  };
-  const toggleAttending = (guestId) => {
-    const updatedGuests = guests.map((guest) => {
-      if (guest.id === guestId) {
-        return { ...guest, attending: !guest.attending };
-      }
-      return guest;
-    });
-    setGuests(updatedGuests);
+
+  const toggleAttending = async (guestId) => {
+    try {
+      const updatedGuests = guests.map((guest) => {
+        if (guest.id === guestId) {
+          return {
+            ...guest,
+            attending: !guest.attending,
+          };
+        }
+        return guest;
+      });
+      await fetch(`${baseUrl}/guests/${guestId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedGuests),
+      });
+      setGuests(updatedGuests);
+    } catch (error) {
+      console.error('Error updating attendance:', error);
+    }
   };
 
   return (
     <div>
-      <label htmlFor="firstName">First name:</label>
-      <input
-        id="firstName"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-      />
-      <br />
-      <label htmlFor="lastName">Last name:</label>
-      <input
-        id="lastName"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            addGuest(firstName, lastName);
-            clearFields();
-          }
-        }}
-      />
+      <h1>Guest List App</h1>
 
-      {guests.map((guest) => (
-        <div key={`guest--${guest.id}`} data-test-id="guest">
-          <p>First Name: {guest.firstName}</p>
-          <p>Last Name: {guest.lastName}</p>
-          <p>Attending: {guest.attending ? 'Yes' : 'No'}</p>
-          <label
-            htmlFor={`attending-${guest.id}`}
-            aria-label={`${guest.firstName} ${guest.lastName} attending status`}
-          >
-            Attending:
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <div>
+            <label htmlFor="firstName">First name</label>
             <input
-              id={`attending-${guest.id}`}
-              type="checkbox"
-              checked={guest.attending}
-              onChange={() => toggleAttending(guest.id)}
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
             />
-          </label>
-          <button
-            onClick={() => deleteGuest(guest.id)}
-            aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
-          >
-            Remove
-          </button>
+          </div>
+          <div>
+            <label htmlFor="lastName">Last name</label>
+            <input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  addGuest();
+                }
+              }}
+            />
+          </div>
+          <button onClick={addGuest}>Add Guest</button>
+
+          <div>
+            {guests.map((guest) => (
+              <div key={`guest-${guest.id}`} data-test-id={`guest-${guest.id}`}>
+                <p>
+                  {guest.firstName} {guest.lastName}{' '}
+                </p>
+                <button
+                  onClick={() => removeGuest(guest.id)}
+                  aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
+                >
+                  Remove
+                </button>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={guest.attending}
+                    onChange={() => toggleAttending(guest.id)}
+                    aria-label={`${guest.firstName} ${guest.lastName} ${
+                      guest.attending ? 'attending' : 'not attending'
+                    } status`}
+                  />
+                  {guest.attending ? 'Attending' : 'Not attending'}
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 }
