@@ -125,32 +125,36 @@ export default function App() {
           <div>
             {guests.map((guest) => (
               <div key={`guest-${guest.id}`} data-test-id={`guest-${guest.id}`}>
-                <p className="guest-name">
-                  {guest.firstName} {guest.lastName}{' '}
-                </p>
-                <button
-                  onClick={() => removeGuest(guest.id)}
-                  aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
-                >
-                  Remove
-                </button>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={guest.attending}
-                    onChange={() => toggleAttending(guest.id)}
-                    aria-label={`${guest.firstName} ${guest.lastName} ${
-                      guest.attending ? 'attending' : 'not attending'
-                    } status`}
-                  />
-                  <span
-                    className={`attending-status ${
-                      guest.attending ? 'attending' : 'not-attending'
-                    }`}
+                <div className="guest-name-container">
+                  <p className="guest-name">
+                    {guest.firstName} {guest.lastName}
+                  </p>
+                </div>
+                <div className="guest-actions">
+                  <button
+                    onClick={() => removeGuest(guest.id)}
+                    aria-label={`Remove ${guest.firstName} ${guest.lastName}`}
                   >
-                    {guest.attending ? 'Attending' : 'Not attending'}
-                  </span>
-                </label>
+                    Remove
+                  </button>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={guest.attending}
+                      onChange={() => toggleAttending(guest.id)}
+                      aria-label={`${guest.firstName} ${guest.lastName} ${
+                        guest.attending ? 'attending' : 'not attending'
+                      } status`}
+                    />
+                    <span
+                      className={`attending-status ${
+                        guest.attending ? 'attending' : 'not-attending'
+                      }`}
+                    >
+                      {guest.attending ? 'Attending' : 'Not attending'}
+                    </span>
+                  </label>
+                </div>
               </div>
             ))}
           </div>
