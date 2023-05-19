@@ -143,8 +143,12 @@ export default function App() {
                       guest.attending ? 'attending' : 'not attending'
                     } status`}
                   />
-                  <span className="attending-status">
-                    {guest.attending ? 'Attending' : 'Not attending'}{' '}
+                  <span
+                    className={`attending-status ${
+                      guest.attending ? 'attending' : 'not-attending'
+                    }`}
+                  >
+                    {guest.attending ? 'Attending' : 'Not attending'}
                   </span>
                 </label>
               </div>
