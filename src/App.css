@@ -1,7 +1,7 @@
 /* app.css */
 
 body {
-  background-color: rgb(163, 226, 255);
+  background-color: rgb(162, 223, 247);
 }
 
 .CentralGuestListModule {
@@ -13,9 +13,16 @@ body {
 }
 
 .label-input-container {
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
   align-items: center;
+}
+
+.label-input-container label.lastname {
+  margin-left: 5px;
+}
+
+.label-input-container input {
+  margin-top: 12px;
 }
 
 .CentralGuestListModule h1 {
